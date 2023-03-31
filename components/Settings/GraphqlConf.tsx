@@ -1,0 +1,117 @@
+import {IconKey} from '@tabler/icons-react';
+import {useTranslation} from 'next-i18next';
+import {buildSchema, parse, validate} from 'graphql';
+import {FC, FormEvent, useState} from 'react';
+import {SidebarButton} from '../Sidebar/SidebarButton';
+
+export type GraphqlConf = {
+    url?: string;
+    accessToken?: string;
+    schema?: string;
+};
+
+interface Props {
+    graphqlConf: GraphqlConf;
+    onGraphqlConf: (graphqlConf: GraphqlConf) => void;
+}
+
+
+export const validateGraphqlSchema = (schemaString: string): string[] => {
+    try {
+        const schemaDocument = parse('query { __schema { queryType { name } }}');
+        const schema = buildSchema(schemaString);
+        const errors = validate(schema, schemaDocument);
+        return errors.map((error) => error.message);
+    } catch (error) {
+        return [`${error}`];
+    }
+};
+
+export const GraphqlChatConf: FC<Props> = ({graphqlConf, onGraphqlConf}) => {
+    const {t} = useTranslation('sidebar');
+    const [isOpen, setIsOpen] = useState(false);
+    const [url, setUrl] = useState(graphqlConf.url || "");
+    const [accessToken, setAccessToken] = useState(graphqlConf.accessToken || "");
+    const [schema, setSchema] = useState(graphqlConf.schema || "");
+    const [schemaError, setSchemaError] = useState("");
+
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const errors = validateGraphqlSchema(schema);
+        if (errors.length === 0) {
+            setSchemaError("");
+            setIsOpen(false);
+            // Process form submission
+            onGraphqlConf({url, accessToken, schema});
+        } else {
+            setSchemaError("Invalid GraphQL Schema -\n" + errors.join(",\n"))
+        }
+    };
+
+    return <>
+        <SidebarButton
+            text={t('Graphql Chat Conf') || ('Graphql Chat Conf')}
+            icon={<IconKey size={18}/>}
+            onClick={() => setIsOpen(true)}
+        />
+        {isOpen && (
+            <div className="fixed inset-0 flex items-center justify-center z-10">
+                <div
+                    className="absolute inset-0 bg-black opacity-40"
+                    onClick={() => setIsOpen(false)}
+                ></div>
+                <form
+                    className="relative bg-white dark:bg-[#343541] shadow-lg rounded p-4 w-11/12 md:w-4/5 h-4/5 overflow-y-auto text-gray-800 dark:text-gray-100"
+                    onSubmit={handleSubmit}
+                >
+                    <div className="mb-4">
+                        <label htmlFor="url" className="block mb-1">
+                            GraphQL Endpoint:
+                        </label>
+                        <input
+                            type="url"
+                            id="url"
+                            className="w-11/12 p-2 border border-gray-300 rounded bg-transparent"
+                            value={url}
+                            onChange={(e) => setUrl(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="accessToken" className="block mb-1">
+                            Access Token:
+                        </label>
+                        <input
+                            type="text"
+                            id="accessToken"
+                            className="w-11/12 p-2 border border-gray-300 rounded bg-transparent"
+                            value={accessToken}
+                            onChange={(e) => setAccessToken(e.target.value)}
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="schema" className="block mb-1">
+                            GraphQL Schema:
+                        </label>
+                        <textarea
+                            id="schema"
+                            className="w-11/12 h-full p-2 border border-gray-300 rounded bg-transparent"
+                            value={schema}
+                            onChange={(e) => setSchema(e.target.value)}
+                            required
+                        ></textarea>
+                        {schemaError && (
+                            <p className="text-red-500 text-sm mt-1">{schemaError}</p>
+                        )}
+                    </div>
+                    <button
+                        type="submit"
+                        className="bg-black text-white px-4 py-2 rounded"
+                    >
+                        Submit
+                    </button>
+                </form>
+            </div>
+        )}
+    </>
+};
