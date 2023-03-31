@@ -49,8 +49,8 @@ const client = new ApolloClient({
 });
 
 const CHAT_MUTATION = gql`
-    mutation Chat($question: String!, $graphqlEndpoint: String!, $graphqlSchema: String!, $accessToken: String) {
-        chat(question: $question, graphqlEndpoint: $graphqlEndpoint, graphqlSchema: $graphqlSchema, accessToken: $accessToken) {
+    mutation Chat($question: String!, $graphqlEndpoint: String, $graphqlSchema: String, $endpointAccessToken: String) {
+        chat(question: $question, graphqlEndpoint: $graphqlEndpoint, graphqlSchema: $graphqlSchema, endpointAccessToken: $endpointAccessToken) {
             question
             graphqlQuery
             graphqlAnswer
@@ -122,9 +122,9 @@ const Home: React.FC<HomeProps> = ({
             const {data} = await chatMutation({
                 variables: {
                     question: updatedConversation.messages[updatedConversation.messages.length - 1].content,
-                    graphqlEndpoint: graphqlConf.url,
-                    graphqlSchema: graphqlConf.schema,
-                    accessToken: graphqlConf.accessToken
+                    graphqlEndpoint: graphqlConf.graphqlEndpoint,
+                    graphqlSchema: graphqlConf.graphqlSchema,
+                    endpointAccessToken: graphqlConf.endpointAccessToken
                 },
             });
             console.log('data', data);

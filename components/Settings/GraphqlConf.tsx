@@ -5,9 +5,9 @@ import {FC, FormEvent, useState} from 'react';
 import {SidebarButton} from '../Sidebar/SidebarButton';
 
 export type GraphqlConf = {
-    url?: string;
-    accessToken?: string;
-    schema?: string;
+    graphqlEndpoint?: string;
+    endpointAccessToken?: string;
+    graphqlSchema?: string;
 };
 
 interface Props {
@@ -30,19 +30,19 @@ export const validateGraphqlSchema = (schemaString: string): string[] => {
 export const GraphqlChatConf: FC<Props> = ({graphqlConf, onGraphqlConf}) => {
     const {t} = useTranslation('sidebar');
     const [isOpen, setIsOpen] = useState(false);
-    const [url, setUrl] = useState(graphqlConf.url || "");
-    const [accessToken, setAccessToken] = useState(graphqlConf.accessToken || "");
-    const [schema, setSchema] = useState(graphqlConf.schema || "");
+    const [graphqlEndpoint, setGraphqlEndpoint] = useState(graphqlConf.graphqlEndpoint || "");
+    const [endpointAccessToken, setEndpointAccessToken] = useState(graphqlConf.endpointAccessToken || "");
+    const [graphqlSchema, setGraphqlSchema] = useState(graphqlConf.graphqlSchema || "");
     const [schemaError, setSchemaError] = useState("");
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const errors = validateGraphqlSchema(schema);
+        const errors = validateGraphqlSchema(graphqlSchema);
         if (errors.length === 0) {
             setSchemaError("");
             setIsOpen(false);
             // Process form submission
-            onGraphqlConf({url, accessToken, schema});
+            onGraphqlConf({graphqlSchema, endpointAccessToken, graphqlEndpoint});
         } else {
             setSchemaError("Invalid GraphQL Schema -\n" + errors.join(",\n"))
         }
@@ -72,21 +72,21 @@ export const GraphqlChatConf: FC<Props> = ({graphqlConf, onGraphqlConf}) => {
                             type="url"
                             id="url"
                             className="w-11/12 p-2 border border-gray-300 rounded bg-transparent"
-                            value={url}
-                            onChange={(e) => setUrl(e.target.value)}
+                            value={graphqlEndpoint}
+                            onChange={(e) => setGraphqlEndpoint(e.target.value)}
                             required
                         />
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="accessToken" className="block mb-1">
-                            Access Token:
+                        <label htmlFor="endpointAccessToken" className="block mb-1">
+                            Endpoint Access Token:
                         </label>
                         <input
                             type="text"
-                            id="accessToken"
+                            id="endpointAccessToken"
                             className="w-11/12 p-2 border border-gray-300 rounded bg-transparent"
-                            value={accessToken}
-                            onChange={(e) => setAccessToken(e.target.value)}
+                            value={endpointAccessToken}
+                            onChange={(e) => setEndpointAccessToken(e.target.value)}
                         />
                     </div>
                     <div className="mb-4">
@@ -96,8 +96,8 @@ export const GraphqlChatConf: FC<Props> = ({graphqlConf, onGraphqlConf}) => {
                         <textarea
                             id="schema"
                             className="w-11/12 h-full p-2 border border-gray-300 rounded bg-transparent"
-                            value={schema}
-                            onChange={(e) => setSchema(e.target.value)}
+                            value={graphqlSchema}
+                            onChange={(e) => setGraphqlSchema(e.target.value)}
                             required
                         ></textarea>
                         {schemaError && (
