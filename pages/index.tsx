@@ -623,6 +623,17 @@ const Home: React.FC<HomeProps> = ({
         folderId: null,
       });
     }
+    // Debug
+    // setPluginState({
+    //   isLoading: true,
+    //   steps: [{
+    //     thought: 'I need to group the data by neighborhood and price range and then generate a histogram',
+    //     action: 'python_repl_ast',
+    //     actionInput: '',
+    //     result: ''
+    //   }],
+    //   finalResult: 'Finished browsing'
+    // })
   }, [serverSideApiKeyIsSet]);
 
   return (
