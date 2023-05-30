@@ -2,7 +2,7 @@ import { Chat } from '@/components/Chat/Chat';
 import { Chatbar } from '@/components/Chatbar/Chatbar';
 import { Navbar } from '@/components/Mobile/Navbar';
 import { Promptbar } from '@/components/Promptbar/Promptbar';
-import { ChatBody, Conversation, Message } from '@/types/chat';
+import {ChatBody, Conversation, Message, PluginState} from '@/types/chat';
 import { KeyValuePair } from '@/types/data';
 import { ErrorMessage } from '@/types/error';
 import { LatestExportFormat, SupportedExportFormats } from '@/types/export';
@@ -60,6 +60,7 @@ const Home: React.FC<HomeProps> = ({
   const [folders, setFolders] = useState<Folder[]>([]);
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [pluginState, setPluginState] = useState<PluginState>();
   const [selectedConversation, setSelectedConversation] =
     useState<Conversation>();
   const [currentMessage, setCurrentMessage] = useState<Message>();
@@ -149,7 +150,7 @@ const Home: React.FC<HomeProps> = ({
       let done = false;
       let isFirst = true;
       let text = '';
-
+      let ourPluginState: PluginState | undefined;
       while (!done) {
         if (stopConversationRef.current === true) {
           controller.abort();
@@ -215,9 +216,8 @@ const Home: React.FC<HomeProps> = ({
       }
 
       setConversations(updatedConversations);
-
+      setPluginState(ourPluginState);
       saveConversations(updatedConversations);
-
       setMessageIsStreaming(false);
     }
   };

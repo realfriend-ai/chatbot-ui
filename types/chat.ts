@@ -14,6 +14,19 @@ export interface ChatBody {
   prompt: string;
 }
 
+export interface PluginStep {
+  thought?: string;
+  tool?: string;
+  result?: string;
+  input?: string;
+}
+
+export interface PluginState {
+  isLoading: boolean;
+  steps: PluginStep[];
+  finalResult: string;
+}
+
 export interface Conversation {
   id: string;
   name: string;
