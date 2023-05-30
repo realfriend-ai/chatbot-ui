@@ -620,7 +620,7 @@ const Home: React.FC<HomeProps> = ({
   return (
     <>
       <Head>
-        <title>Chatbot UI</title>
+        <title>RealEstate Data AI</title>
         <meta name="description" content="ChatGPT but better." />
         <meta
           name="viewport"
@@ -743,7 +743,7 @@ const Home: React.FC<HomeProps> = ({
 export default Home;
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  const defaultModelId =
+  const defaultModelId = OpenAIModelID.DATA_FRAME_ASSISTANT ||
     (process.env.DEFAULT_MODEL &&
       Object.values(OpenAIModelID).includes(
         process.env.DEFAULT_MODEL as OpenAIModelID,
