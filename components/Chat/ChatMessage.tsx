@@ -15,33 +15,48 @@ interface Props {
     onEditMessage: (message: Message, messageIndex: number) => void;
 }
 
-const getPluginState = (message: string): PluginState => {
+export const getPluginState = (message: string): PluginState => {
     let pluginState: PluginState = {
         isLoading: false,
         steps: [],
         finalResult: ''
     }
-    const isPluginMessage = message.startsWith('Thought:');
+    const thoughtSeparator = '**Thought:**';
+    const actionSeparator = '**Action:**';
+    const actionInputSeparator = '**Action Input:**';
+    const resultSeparator = '**Result:**';
+    const errorSeparator = '**Error:**';
+    const isPluginMessage = message.startsWith(thoughtSeparator);
     if (!isPluginMessage) {
         return pluginState;
     }
     pluginState.isLoading = true;
-    pluginState.steps = message.split('Thought:').map((step) => {
-        console.log('step', step);
-        const actionSplit = step.split('Action:');
+    pluginState.steps = message.split(thoughtSeparator).map((step) => {
+        const actionSplit = step.split(actionSeparator);
         const thought = actionSplit?.[0].trim();
-        const actionInputSplit = actionSplit?.[1]?.split('Action Input:');
+        const actionInputSplit = actionSplit?.[1]?.split(actionInputSeparator);
         const action = actionInputSplit?.[0]?.trim();
-        const actionInput = actionInputSplit?.[1]?.trim();
+        let resultSplit = actionInputSplit?.[1]?.trim()?.split(resultSeparator);
+        let isError = false;
+        if (resultSplit?.length < 2) {
+            resultSplit = actionInputSplit?.[1]?.trim()?.split(errorSeparator);
+            isError = true;
+        }
+        const actionInput = resultSplit?.[0]?.trim();
+        let result = resultSplit?.[1]?.trim();
+        if (result && isError) {
+            result = 'Error:' + result;
+        }
         return {
             thought,
             action,
-            actionInput
+            actionInput,
+            result
         }
     });
-    if (message.indexOf('Final Result:') !== -1) {
+    if (message.indexOf('**Final Answer:**') !== -1 || message.indexOf(errorSeparator) !== -1) {
         pluginState.isLoading = false;
-        pluginState.finalResult = message.split('Final Answer:')[1].trim();
+        pluginState.finalResult = message.split('**Final Answer:**')[1]?.trim() || "Error: " + message.split(errorSeparator)[1].trim();
     }
     return pluginState;
 }
@@ -263,7 +278,8 @@ export const ChatMessage: FC<Props> = memo(
                                             },
                                         }}
                                     >
-                                        {pluginState?.finalResult ? pluginState?.finalResult : message.content}
+                                        {/*{pluginState?.finalResult ? pluginState?.finalResult : message.content}*/}
+                                        {message.content}
                                     </MemoizedReactMarkdown>
                                 </div>
                             </>
