@@ -11,18 +11,52 @@ import {PluginView} from "@/components/PluginView/PluginView";
 
 interface Props {
     message: Message;
-    pluginState: PluginState | undefined;
     messageIndex: number;
     onEditMessage: (message: Message, messageIndex: number) => void;
 }
 
+const getPluginState = (message: string): PluginState => {
+    let pluginState: PluginState = {
+        isLoading: false,
+        steps: [],
+        finalResult: ''
+    }
+    const isPluginMessage = message.startsWith('Thought:');
+    if (!isPluginMessage) {
+        return pluginState;
+    }
+    pluginState.steps = message.split('Thought:').map((step) => {
+        console.log('step', step);
+        const actionSplit = step.split('Action:');
+        const thought = actionSplit?.[0].trim();
+        const actionInputSplit = actionSplit?.[1]?.split('Action Input:');
+        const action = actionInputSplit?.[0]?.trim();
+        const actionInput = actionInputSplit?.[1]?.trim();
+        return {
+            thought,
+            action,
+            actionInput
+        }
+    });
+    if (message.indexOf('Final Result:') !== -1) {
+        pluginState.isLoading = false;
+        pluginState.finalResult = message.split('Final Result:')[1].trim();
+    }
+    return pluginState;
+}
+
 export const ChatMessage: FC<Props> = memo(
-    ({message, messageIndex, onEditMessage, pluginState}) => {
+    ({message, messageIndex, onEditMessage}) => {
         const {t} = useTranslation('chat');
         const [isEditing, setIsEditing] = useState<boolean>(false);
         const [isTyping, setIsTyping] = useState<boolean>(false);
         const [messageContent, setMessageContent] = useState(message.content);
         const [messagedCopied, setMessageCopied] = useState(false);
+        const [pluginState, setPluginState] = useState<PluginState>({
+            isLoading: false,
+            steps: [],
+            finalResult: ''
+        });
 
         const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -71,6 +105,13 @@ export const ChatMessage: FC<Props> = memo(
                 textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
             }
         }, [isEditing]);
+
+        useEffect(() => {
+            if (message.content) {
+                setPluginState(getPluginState(message.content));
+            }
+        }, [message.content]);
+
 
         return (
             <div
@@ -174,53 +215,56 @@ export const ChatMessage: FC<Props> = memo(
                                 </div>
                                 {(pluginState?.isLoading || pluginState?.steps.length) ?
                                     <PluginView pluginState={pluginState}/> : null}
-                                <MemoizedReactMarkdown
-                                    className="prose dark:prose-invert"
-                                    remarkPlugins={[remarkGfm, remarkMath]}
-                                    rehypePlugins={[rehypeMathjax]}
-                                    components={{
-                                        code({node, inline, className, children, ...props}) {
-                                            const match = /language-(\w+)/.exec(className || '');
+                                <div
+                                    className={"min-h-[20px] flex flex-col items-start gap-4 whitespace-pre-wrap break-words"}>
+                                    <MemoizedReactMarkdown
+                                        className="prose dark:prose-invert"
+                                        remarkPlugins={[remarkGfm, remarkMath]}
+                                        rehypePlugins={[rehypeMathjax]}
+                                        components={{
+                                            code({node, inline, className, children, ...props}) {
+                                                const match = /language-(\w+)/.exec(className || '');
 
-                                            return !inline && match ? (
-                                                <CodeBlock
-                                                    key={Math.random()}
-                                                    language={match[1]}
-                                                    value={String(children).replace(/\n$/, '')}
-                                                    {...props}
-                                                />
-                                            ) : (
-                                                <code className={className} {...props}>
-                                                    {children}
-                                                </code>
-                                            );
-                                        },
-                                        table({children}) {
-                                            return (
-                                                <table
-                                                    className="border-collapse border border-black py-1 px-3 dark:border-white">
-                                                    {children}
-                                                </table>
-                                            );
-                                        },
-                                        th({children}) {
-                                            return (
-                                                <th className="break-words border border-black bg-gray-500 py-1 px-3 text-white dark:border-white">
-                                                    {children}
-                                                </th>
-                                            );
-                                        },
-                                        td({children}) {
-                                            return (
-                                                <td className="break-words border border-black py-1 px-3 dark:border-white">
-                                                    {children}
-                                                </td>
-                                            );
-                                        },
-                                    }}
-                                >
-                                    {message.content}
-                                </MemoizedReactMarkdown>
+                                                return !inline && match ? (
+                                                    <CodeBlock
+                                                        key={Math.random()}
+                                                        language={match[1]}
+                                                        value={String(children).replace(/\n$/, '')}
+                                                        {...props}
+                                                    />
+                                                ) : (
+                                                    <code className={className} {...props}>
+                                                        {children}
+                                                    </code>
+                                                );
+                                            },
+                                            table({children}) {
+                                                return (
+                                                    <table
+                                                        className="border-collapse border border-black py-1 px-3 dark:border-white">
+                                                        {children}
+                                                    </table>
+                                                );
+                                            },
+                                            th({children}) {
+                                                return (
+                                                    <th className="break-words border border-black bg-gray-500 py-1 px-3 text-white dark:border-white">
+                                                        {children}
+                                                    </th>
+                                                );
+                                            },
+                                            td({children}) {
+                                                return (
+                                                    <td className="break-words border border-black py-1 px-3 dark:border-white">
+                                                        {children}
+                                                    </td>
+                                                );
+                                            },
+                                        }}
+                                    >
+                                        {message.content}
+                                    </MemoizedReactMarkdown>
+                                </div>
                             </>
                         )}
                     </div>
