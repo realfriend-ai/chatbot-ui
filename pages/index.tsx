@@ -751,17 +751,17 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       process.env.DEFAULT_MODEL) ||
     fallbackModelID;
 
-  return {
-    props: {
-      serverSideApiKeyIsSet: !!process.env.OPENAI_API_KEY,
-      defaultModelId,
-      ...(await serverSideTranslations(locale ?? 'en', [
-        'common',
-        'chat',
-        'sidebar',
-        'markdown',
-        'promptbar',
-      ])),
-    },
-  };
+    return {
+        props: {
+            serverSideApiKeyIsSet: true || !!process.env.OPENAI_API_KEY,
+            defaultModelId,
+            ...(await serverSideTranslations(locale ?? 'en', [
+                'common',
+                'chat',
+                'sidebar',
+                'markdown',
+                'promptbar',
+            ])),
+        },
+    };
 };

@@ -209,36 +209,36 @@ export const Chat: FC<Props> = memo(
                           <Spinner size="16px" className="mx-auto" />
                         </div>
                       ) : (
-                        'Chatbot UI'
+                        'RealEstate AI'
                       )}
                     </div>
 
-                    {models.length > 0 && (
-                      <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-600">
-                        <ModelSelect
-                          model={conversation.model}
-                          models={models}
-                          defaultModelId={defaultModelId}
-                          onModelChange={(model) =>
-                            onUpdateConversation(conversation, {
-                              key: 'model',
-                              value: model,
-                            })
-                          }
-                        />
+                    {/*{models.length > 0 && (*/}
+                    {/*  <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-600">*/}
+                    {/*    <ModelSelect*/}
+                    {/*      model={conversation.model}*/}
+                    {/*      models={models}*/}
+                    {/*      defaultModelId={defaultModelId}*/}
+                    {/*      onModelChange={(model) =>*/}
+                    {/*        onUpdateConversation(conversation, {*/}
+                    {/*          key: 'model',*/}
+                    {/*          value: model,*/}
+                    {/*        })*/}
+                    {/*      }*/}
+                    {/*    />*/}
 
-                        <SystemPrompt
-                          conversation={conversation}
-                          prompts={prompts}
-                          onChangePrompt={(prompt) =>
-                            onUpdateConversation(conversation, {
-                              key: 'prompt',
-                              value: prompt,
-                            })
-                          }
-                        />
-                      </div>
-                    )}
+                    {/*    <SystemPrompt*/}
+                    {/*      conversation={conversation}*/}
+                    {/*      prompts={prompts}*/}
+                    {/*      onChangePrompt={(prompt) =>*/}
+                    {/*        onUpdateConversation(conversation, {*/}
+                    {/*          key: 'prompt',*/}
+                    {/*          value: prompt,*/}
+                    {/*        })*/}
+                    {/*      }*/}
+                    {/*    />*/}
+                    {/*  </div>*/}
+                    {/*)}*/}
                   </div>
                 </>
               ) : (

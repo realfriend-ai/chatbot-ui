@@ -318,11 +318,11 @@ export const ChatInput: FC<Props> = ({
           rel="noreferrer"
           className="underline"
         >
-          ChatBot UI
+          RealEstate AI
         </a>
         .{' '}
         {t(
-          "Chatbot UI is an advanced chatbot kit for OpenAI's chat models aiming to mimic ChatGPT's interface and functionality.",
+          "RealEstate AI is your real estate data science in your pocket",
         )}
       </div>
     </div>
