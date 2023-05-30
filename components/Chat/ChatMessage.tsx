@@ -25,6 +25,7 @@ const getPluginState = (message: string): PluginState => {
     if (!isPluginMessage) {
         return pluginState;
     }
+    pluginState.isLoading = true;
     pluginState.steps = message.split('Thought:').map((step) => {
         console.log('step', step);
         const actionSplit = step.split('Action:');
@@ -40,7 +41,7 @@ const getPluginState = (message: string): PluginState => {
     });
     if (message.indexOf('Final Result:') !== -1) {
         pluginState.isLoading = false;
-        pluginState.finalResult = message.split('Final Result:')[1].trim();
+        pluginState.finalResult = message.split('Final Answer:')[1].trim();
     }
     return pluginState;
 }
@@ -262,7 +263,7 @@ export const ChatMessage: FC<Props> = memo(
                                             },
                                         }}
                                     >
-                                        {message.content}
+                                        {pluginState?.finalResult ? pluginState?.finalResult : message.content}
                                     </MemoizedReactMarkdown>
                                 </div>
                             </>
