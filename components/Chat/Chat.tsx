@@ -1,4 +1,4 @@
-import { Conversation, Message } from '@/types/chat';
+import {Conversation, Message, PluginState} from '@/types/chat';
 import { KeyValuePair } from '@/types/data';
 import { ErrorMessage } from '@/types/error';
 import { OpenAIModel, OpenAIModelID } from '@/types/openai';
@@ -25,6 +25,7 @@ import { SystemPrompt } from './SystemPrompt';
 
 interface Props {
   conversation: Conversation;
+  pluginState: PluginState;
   models: OpenAIModel[];
   apiKey: string;
   serverSideApiKeyIsSet: boolean;
@@ -45,6 +46,7 @@ interface Props {
 export const Chat: FC<Props> = memo(
   ({
     conversation,
+      pluginState,
     models,
     apiKey,
     serverSideApiKeyIsSet,
@@ -282,6 +284,7 @@ export const Chat: FC<Props> = memo(
                       message={message}
                       messageIndex={index}
                       onEditMessage={onEditMessage}
+                      pluginState={(index === conversation.messages.length -1) ? pluginState : undefined}
                     />
                   ))}
 

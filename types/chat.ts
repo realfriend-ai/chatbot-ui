@@ -16,9 +16,9 @@ export interface ChatBody {
 
 export interface PluginStep {
   thought?: string;
-  tool?: string;
+  action?: string;
+  actionInput?: string;
   result?: string;
-  input?: string;
 }
 
 export interface PluginState {

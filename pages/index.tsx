@@ -60,7 +60,11 @@ const Home: React.FC<HomeProps> = ({
   const [folders, setFolders] = useState<Folder[]>([]);
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [pluginState, setPluginState] = useState<PluginState>();
+  const [pluginState, setPluginState] = useState<PluginState>({
+    isLoading: false,
+    steps: [],
+    finalResult: ''
+  });
   const [selectedConversation, setSelectedConversation] =
     useState<Conversation>();
   const [currentMessage, setCurrentMessage] = useState<Message>();
@@ -150,7 +154,11 @@ const Home: React.FC<HomeProps> = ({
       let done = false;
       let isFirst = true;
       let text = '';
-      let ourPluginState: PluginState | undefined;
+      let ourPluginState = {
+        isLoading: false,
+        steps: [],
+        finalResult: ''
+      };
       while (!done) {
         if (stopConversationRef.current === true) {
           controller.abort();
@@ -687,6 +695,7 @@ const Home: React.FC<HomeProps> = ({
             <div className="flex flex-1">
               <Chat
                 conversation={selectedConversation}
+                pluginState={pluginState}
                 messageIsStreaming={messageIsStreaming}
                 apiKey={apiKey}
                 serverSideApiKeyIsSet={serverSideApiKeyIsSet}
