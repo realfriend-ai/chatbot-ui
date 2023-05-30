@@ -28,7 +28,8 @@ export const PluginView: FC<Props> = ({
 
     return (
         <div className="flex flex-col items-start">
-            <div className="flex items-center text-xs rounded p-3 text-gray-900 bg-gray-100">
+            <div
+                className={`flex items-center text-xs rounded p-3 text-gray-900 ${pluginState.isLoading ? 'bg-green-100' : 'bg-gray-100'}`}>
                 <div>
                     <div className="flex items-center gap-2">
                         {pluginState.isLoading ? <LoadingSVG/> :
