@@ -25,6 +25,9 @@ export const PluginView: FC<Props> = ({
                                       }) => {
     const {t} = useTranslation('chat');
     const [isCollapsed, setIsCollapsed] = useState(false);
+    if (!pluginState.isLoading) {
+        return null;
+    }
 
     return (
         <div className="flex flex-col items-start">

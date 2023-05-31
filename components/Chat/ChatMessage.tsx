@@ -63,6 +63,14 @@ export const getPluginState = (message: string): PluginState => {
     return pluginState;
 }
 
+const cleanAnswer = (answer: string): string => {
+    const answerWithNoPythonActions = answer.replaceAll('\\\n' +
+        '**Action:** python_repl_ast\n' +
+        '\\\n**Action Input:**', '');
+    console.log('answer', answerWithNoPythonActions);
+    return answerWithNoPythonActions;
+}
+
 export const ChatMessage: FC<Props> = memo(
     ({message, messageIndex, onEditMessage}) => {
         const {t} = useTranslation('chat');
@@ -281,7 +289,7 @@ export const ChatMessage: FC<Props> = memo(
                                         }}
                                     >
                                         {/*{pluginState?.finalResult ? pluginState?.finalResult : message.content}*/}
-                                        {message.content}
+                                        {cleanAnswer(message.content)}
                                     </MemoizedReactMarkdown>
                                 </div>
                             </>
