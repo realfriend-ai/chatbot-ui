@@ -67,7 +67,8 @@ export const PluginView: FC<Props> = ({
                     className="max-w-full overflow-x-auto mt-3 flex flex-col gap-2 rounded bg-gray-100 p-3 text-gray-800 text-xs">
                     {pluginState.steps.map((step, index) => (
                         <div key={"plugin-step" + index} className="flex items-center gap-2 min-h-[24px]">
-                            {step.action} {step.result ? step.result : <LoadingSVG/>
+                            {step.action} {step.result ? step.result.replace(/!\[.*?\]\(.*?\)/g, '|Rendered Chart|')
+                            : <LoadingSVG/>
                         }
                         </div>
                     ))}
