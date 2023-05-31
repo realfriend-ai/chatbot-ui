@@ -19,6 +19,7 @@ export interface PluginStep {
   action?: string;
   actionInput?: string;
   result?: string;
+  isError?: boolean;
 }
 
 export interface PluginState {

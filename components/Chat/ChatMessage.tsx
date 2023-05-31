@@ -31,7 +31,8 @@ export const getPluginState = (message: string): PluginState => {
         return pluginState;
     }
     pluginState.isLoading = true;
-    pluginState.steps = message.split(thoughtSeparator).map((step) => {
+    const stepsSplit = message.split(thoughtSeparator);
+    pluginState.steps = stepsSplit.map((step) => {
         const actionSplit = step.split(actionSeparator);
         const thought = actionSplit?.[0].trim();
         const actionInputSplit = actionSplit?.[1]?.split(actionInputSeparator);
@@ -51,9 +52,10 @@ export const getPluginState = (message: string): PluginState => {
             thought,
             action,
             actionInput,
-            result
+            result,
+            isError
         }
-    });
+    }).filter((step, index) => !step.isError || index === stepsSplit.length - 1);
     if (message.indexOf('**Final Answer:**') !== -1 || message.indexOf(errorSeparator) !== -1) {
         pluginState.isLoading = false;
         pluginState.finalResult = message.split('**Final Answer:**')[1]?.trim() || "Error: " + message.split(errorSeparator)[1].trim();
