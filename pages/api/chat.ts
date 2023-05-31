@@ -64,7 +64,7 @@ const dataFrameAssistantHandler = async (data: ChatBody): Promise<Response> => {
 const handler = async (req: Request): Promise<Response> => {
     try {
         const data = (await req.json()) as ChatBody;
-        if (data.model.id === OpenAIModelID.DATA_FRAME_ASSISTANT) {
+        if (!data.model.id || data.model.id === OpenAIModelID.DATA_FRAME_ASSISTANT) {
             return dataFrameAssistantHandler(data);
         }
         return defaultHandler(data);
