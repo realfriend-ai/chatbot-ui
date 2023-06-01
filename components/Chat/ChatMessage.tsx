@@ -64,11 +64,26 @@ export const getPluginState = (message: string): PluginState => {
 }
 
 const cleanAnswer = (answer: string): string => {
-    const answerWithNoPythonActions = answer.replaceAll('\\\n' +
+    // Clean python_repl_ast actions
+    let answerWithNoPythonActions = answer.replaceAll('\\\n' +
         '**Action:** python_repl_ast\n' +
         '\\\n**Action Input:**', '');
-    console.log('answer', answerWithNoPythonActions);
-    return answerWithNoPythonActions;
+    answerWithNoPythonActions = answerWithNoPythonActions.replaceAll(`Action: python_repl_ast
+Action Input:`, '');
+    // Clean Errors that are not last step
+    let thoughts = answerWithNoPythonActions.split('Thought:');
+    thoughts = thoughts.filter((thought, index) => {
+        if (index === thoughts.length - 1) {
+            return true;
+        }
+        const splitResult = thought.split('Result:');
+        if (splitResult.length < 2) {
+            return true;
+        }
+        const result = splitResult[1].trim().indexOf('Error:') >= 0;
+        return !result;
+    })
+    return thoughts.join('Thought:');
 }
 
 export const ChatMessage: FC<Props> = memo(
